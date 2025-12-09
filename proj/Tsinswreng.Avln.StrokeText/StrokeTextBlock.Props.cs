@@ -1,6 +1,8 @@
 namespace Tsinswreng.Avln.StrokeText{
+
 using Avalonia;
-using Avalonia.Media;
+	using Avalonia.Layout;
+	using Avalonia.Media;
 
 public partial class StrokeTextBlock{
 	public static readonly StyledProperty<bool> UseVirtualizedRenderProperty =
@@ -74,10 +76,10 @@ public static readonly StyledProperty<string> TextProperty =
 		set => SetValue(StrokeThicknessProperty, value);
 	}
 
-	public static readonly StyledProperty<VAlign> VerticalContentAlignmentProperty =
-		AvaloniaProperty.Register<StrokeTextBlock, VAlign>(nameof(VerticalContentAlignment), VAlign.Center);
+	public static readonly StyledProperty<VerticalAlignment> VerticalContentAlignmentProperty =
+		AvaloniaProperty.Register<StrokeTextBlock, VerticalAlignment>(nameof(VerticalContentAlignment), VerticalAlignment.Center);
 
-	public VAlign VerticalContentAlignment {
+	public VerticalAlignment VerticalContentAlignment {
 		get => GetValue(VerticalContentAlignmentProperty);
 		set => SetValue(VerticalContentAlignmentProperty, value);
 	}

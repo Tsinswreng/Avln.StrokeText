@@ -4,8 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Ngaq.Ui.StrokeText;
-
+using Ngaq.Ui.Views.TestStroke;
+using Tsinswreng.Avln.StrokeText;
 namespace StrokeText.Sample.Views;
 
 public partial class MainView : UserControl {
@@ -19,6 +19,7 @@ public partial class MainView : UserControl {
 		return R;
 	}
 	public MainView() {
+		new MainWindow2().Show();
 		var Sp = new StackPanel();
 		Content = Sp;
 		{var o = Sp;

@@ -10,8 +10,14 @@
 		<ProjectReference Include="../../../proj/Tsinswreng.Avln.StrokeText/Tsinswreng.Avln.StrokeText.csproj" />
 	</ItemGroup>
 
+
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Skia" />
+		<PackageReference Include="SkiaSharp" />
 	</ItemGroup>
 
 	<ItemGroup>
