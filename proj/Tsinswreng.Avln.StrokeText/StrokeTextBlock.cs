@@ -42,15 +42,33 @@ public partial class StrokeTextBlock : Control {
 
 	// Static constructor with property change handlers
 	static StrokeTextBlock() {
-		TextProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.InvalidateVisual());
+		TextProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => {
+			x.InvalidateVisual();
+			x.InvalidateMeasure();
+		});
 		FillProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.InvalidateVisual());
 		StrokeProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.UpdatePen());
 		StrokeThicknessProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.UpdatePen());
-		FontSizeProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.InvalidateVisual());
-		FontFamilyProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.UpdateTypeface());
-		FontStyleProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.UpdateTypeface());
-		FontWeightProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.UpdateTypeface());
-		TextWrappingProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => x.InvalidateVisual());
+		FontSizeProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => {
+			x.InvalidateVisual();
+			x.InvalidateMeasure();
+		});
+		FontFamilyProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => {
+			x.UpdateTypeface();
+			x.InvalidateMeasure();
+		});
+		FontStyleProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => {
+			x.UpdateTypeface();
+			x.InvalidateMeasure();
+		});
+		FontWeightProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => {
+			x.UpdateTypeface();
+			x.InvalidateMeasure();
+		});
+		TextWrappingProperty.Changed.AddClassHandler<StrokeTextBlock>((x, _) => {
+			x.InvalidateVisual();
+			x.InvalidateMeasure();
+		});
 	}
 
 	private Pen _strokePen;
