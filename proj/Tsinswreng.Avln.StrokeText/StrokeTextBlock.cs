@@ -210,6 +210,8 @@ public partial class StrokeTextBlock : Control {
 
 		if (_formattedText != null && _wrappedLines.Count > 0) {
 			var y = 0.0;
+			// Use Foreground property for text color
+			var fillBrush = Foreground ?? Brushes.Black;
 
 			foreach (var line in _wrappedLines) {
 				if (!string.IsNullOrEmpty(line)) {
@@ -219,7 +221,7 @@ public partial class StrokeTextBlock : Control {
 						FlowDirection.LeftToRight,
 						_typeface,
 						FontSize,
-						Fill
+						fillBrush
 					);
 
 					// Draw stroke
