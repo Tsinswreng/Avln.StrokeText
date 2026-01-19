@@ -1,3 +1,4 @@
+#if false
 namespace Tsinswreng.Avln.StrokeText;
 
 using Avalonia;
@@ -96,3 +97,5 @@ public partial class StrokeTextBlock{
 
 
 }
+
+#endif
