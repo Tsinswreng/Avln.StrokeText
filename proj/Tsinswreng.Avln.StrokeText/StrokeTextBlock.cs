@@ -130,37 +130,62 @@ public partial class StrokeTextBlock : Control {
 
 		var words = Text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 		var lines = new List<string>();
-		var currentLine = "";
-		var currentWidth = 0.0;
 
 		foreach (var word in words) {
 			var wordWidth = MeasureTextWidth(word);
-			var spaceWidth = currentLine.Length > 0 ? MeasureTextWidth(" ") : 0;
 
-			if (currentWidth + spaceWidth + wordWidth <= maxWidth) {
-				// Add word to current line
-				if (currentLine.Length > 0) {
-					currentLine += " ";
-					currentWidth += spaceWidth;
+			// If the word itself is wider than maxWidth, break it into smaller chunks
+			if (wordWidth > maxWidth) {
+				// Break long words character by character
+				var remainingWord = word;
+				while (!string.IsNullOrEmpty(remainingWord)) {
+					var chunk = GetMaxFittingText(remainingWord, maxWidth);
+					if (!string.IsNullOrEmpty(chunk)) {
+						lines.Add(chunk);
+						remainingWord = remainingWord.Substring(chunk.Length);
+					} else {
+						// If even a single character doesn't fit, add it anyway
+						lines.Add(remainingWord.Substring(0, 1));
+						remainingWord = remainingWord.Substring(1);
+					}
 				}
-				currentLine += word;
-				currentWidth += wordWidth;
 			} else {
-				// Start new line
-				if (currentLine.Length > 0) {
-					lines.Add(currentLine);
+				// Check if word fits on current line
+				if (lines.Count == 0 || MeasureTextWidth(lines[lines.Count - 1] + " " + word) > maxWidth) {
+					// Start new line
+					lines.Add(word);
+				} else {
+					// Add to current line
+					lines[lines.Count - 1] += " " + word;
 				}
-				currentLine = word;
-				currentWidth = wordWidth;
 			}
 		}
 
-		// Add the last line
-		if (currentLine.Length > 0) {
-			lines.Add(currentLine);
+		_wrappedLines.AddRange(lines);
+	}
+
+	private string GetMaxFittingText(string text, double maxWidth) {
+		if (string.IsNullOrEmpty(text)) return "";
+
+		// Binary search for the maximum length that fits
+		var low = 1;
+		var high = text.Length;
+		var bestFit = "";
+
+		while (low <= high) {
+			var mid = (low + high) / 2;
+			var substring = text.Substring(0, mid);
+			var width = MeasureTextWidth(substring);
+
+			if (width <= maxWidth) {
+				bestFit = substring;
+				low = mid + 1;
+			} else {
+				high = mid - 1;
+			}
 		}
 
-		_wrappedLines.AddRange(lines);
+		return bestFit;
 	}
 
 	private double MeasureTextWidth(string text) {
@@ -215,8 +240,14 @@ public partial class StrokeTextBlock : Control {
 			UpdateFormattedText();
 		}
 
-		// Wrap text based on available width
-		WrapText(availableSize.Width);
+		// Only wrap text if we have a finite width constraint
+		if (!double.IsInfinity(availableSize.Width) && TextWrapping != TextWrapping.NoWrap) {
+			WrapText(availableSize.Width);
+		} else {
+			// No wrapping - treat as single line
+			_wrappedLines.Clear();
+			_wrappedLines.Add(Text ?? "");
+		}
 
 		// Calculate total width and height
 		var totalWidth = 0.0;
