@@ -109,7 +109,7 @@ public partial class StrokeTextBlock : Control {
 		}
 
 		_formattedText = new FormattedText(
-			"X", // Single character to measure line height
+			"Ay", // Characters with ascender and descender to measure line height properly
 			CultureInfo.CurrentCulture,
 			FlowDirection.LeftToRight,
 			_typeface,
@@ -117,7 +117,8 @@ public partial class StrokeTextBlock : Control {
 			Fill
 		);
 
-		_lineHeight = _formattedText.Height;
+		// Add small buffer to line height to prevent text cutoff on mobile platforms
+		_lineHeight = _formattedText.Height * 1.1;
 	}
 
 	private void WrapText(double maxWidth) {
