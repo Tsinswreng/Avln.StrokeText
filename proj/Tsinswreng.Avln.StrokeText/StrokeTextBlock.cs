@@ -123,45 +123,62 @@ public partial class StrokeTextBlock : Control {
 	private void WrapText(double maxWidth) {
 		_wrappedLines.Clear();
 
-		if (string.IsNullOrEmpty(Text) || TextWrapping == TextWrapping.NoWrap) {
-			_wrappedLines.Add(Text ?? "");
+		if (string.IsNullOrEmpty(Text)) {
 			return;
 		}
 
-		var words = Text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-		var lines = new List<string>();
-
-		foreach (var word in words) {
-			var wordWidth = MeasureTextWidth(word);
-
-			// If the word itself is wider than maxWidth, break it into smaller chunks
-			if (wordWidth > maxWidth) {
-				// Break long words character by character
-				var remainingWord = word;
-				while (!string.IsNullOrEmpty(remainingWord)) {
-					var chunk = GetMaxFittingText(remainingWord, maxWidth);
-					if (!string.IsNullOrEmpty(chunk)) {
-						lines.Add(chunk);
-						remainingWord = remainingWord.Substring(chunk.Length);
-					} else {
-						// If even a single character doesn't fit, add it anyway
-						lines.Add(remainingWord.Substring(0, 1));
-						remainingWord = remainingWord.Substring(1);
-					}
-				}
-			} else {
-				// Check if word fits on current line
-				if (lines.Count == 0 || MeasureTextWidth(lines[lines.Count - 1] + " " + word) > maxWidth) {
-					// Start new line
-					lines.Add(word);
-				} else {
-					// Add to current line
-					lines[lines.Count - 1] += " " + word;
-				}
-			}
+		if (TextWrapping == TextWrapping.NoWrap) {
+			_wrappedLines.Add(Text);
+			return;
 		}
 
-		_wrappedLines.AddRange(lines);
+		// Split text by lines first (preserve explicit line breaks)
+		var rawLines = Text.Split(new[] { '\r', '\n' }, StringSplitOptions.None);
+
+		foreach (var rawLine in rawLines) {
+			if (string.IsNullOrEmpty(rawLine)) {
+				// Empty line (from \n\n or similar)
+				_wrappedLines.Add("");
+				continue;
+			}
+
+			// Now wrap this line if it's too long
+			var words = rawLine.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+			var wrappedLinesForThisLine = new List<string>();
+
+			foreach (var word in words) {
+				var wordWidth = MeasureTextWidth(word);
+
+				// If the word itself is wider than maxWidth, break it into smaller chunks
+				if (wordWidth > maxWidth) {
+					// Break long words character by character
+					var remainingWord = word;
+					while (!string.IsNullOrEmpty(remainingWord)) {
+						var chunk = GetMaxFittingText(remainingWord, maxWidth);
+						if (!string.IsNullOrEmpty(chunk)) {
+							wrappedLinesForThisLine.Add(chunk);
+							remainingWord = remainingWord.Substring(chunk.Length);
+						} else {
+							// If even a single character doesn't fit, add it anyway
+							wrappedLinesForThisLine.Add(remainingWord.Substring(0, 1));
+							remainingWord = remainingWord.Substring(1);
+						}
+					}
+				} else {
+					// Check if word fits on current line
+					if (wrappedLinesForThisLine.Count == 0 ||
+						MeasureTextWidth(wrappedLinesForThisLine[wrappedLinesForThisLine.Count - 1] + " " + word) > maxWidth) {
+						// Start new line
+						wrappedLinesForThisLine.Add(word);
+					} else {
+						// Add to current line
+						wrappedLinesForThisLine[wrappedLinesForThisLine.Count - 1] += " " + word;
+					}
+				}
+			}
+
+			_wrappedLines.AddRange(wrappedLinesForThisLine);
+		}
 	}
 
 	private string GetMaxFittingText(string text, double maxWidth) {
@@ -231,7 +248,7 @@ public partial class StrokeTextBlock : Control {
 					// Draw fill
 					dc.DrawText(lineText, new Point(0, y));
 				}
-
+				// Always advance Y position for each line, including empty lines (line breaks)
 				y += _lineHeight;
 			}
 		}
