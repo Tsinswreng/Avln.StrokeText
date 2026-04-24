@@ -35,9 +35,9 @@ internal static class ExtnStyle{
 	}
 }
 
-/// <summary>
+
 /// StrokeTextBlock with basic functionality - renders stroked text
-/// </summary>
+
 public partial class StrokeTextBlock : Control {
 
 	// Static constructor with property change handlers

@@ -5,7 +5,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="Avalonia.Skia" Version="11.3.8" />
-		<PackageVersion Include="SkiaSharp" Version="3.119.1" />
+		<!-- <PackageVersion Include="SkiaSharp" Version="3.119.1" /> -->
 	</ItemGroup>
 	<ItemGroup>
 		<!-- Avalonia packages -->

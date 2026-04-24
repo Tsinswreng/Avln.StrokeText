@@ -34,10 +34,10 @@ internal static class ExtnStyle{
 	}
 }
 
-/// <summary>
+
 /// TODO 直ᵈ把StrokeTextEdit置于ScrollViewer中旹 未顯者則直被裁掉 亦無法滾動
 /// 這個控件直接放到ScrollViewer中滾動不生效、先套在別的佈局容器裏再放ScrollViewer裏滾動纔生效
-/// </summary>
+
 public partial class StrokeTextBlock : Control {
 
 	// 静态构造里加回调
